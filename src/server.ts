@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 import {config} from 'dotenv'
@@ -28,14 +28,14 @@ import {config} from 'dotenv'
   //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
 
   /**************************************************************************** */
-app.get("/filteredimage", async(req, res) => {
-  var image_url = req.query.image_url;
+app.get("/filteredimage", async (req: Request, res: Response) => {
+  const image_url : string = req.query.image_url;
   if (!image_url) { 
     // respond with an error if not
     res.status(400).send("image_url is required");
   }
   try {
-    const local_file_path = await filterImageFromURL(image_url);
+    const local_file_path : string = await filterImageFromURL(image_url);
     res.status(200).sendFile(local_file_path);
     res.on("finish", async () => await deleteLocalFiles([local_file_path]));
   } catch (error) {
